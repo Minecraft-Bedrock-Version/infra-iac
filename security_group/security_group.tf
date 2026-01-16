@@ -32,6 +32,15 @@ resource "aws_vpc_security_group_ingress_rule" "in_ssh" {
   to_port           = 22 #포트
 }
 
+#보안그룹 인바운드 규칙 생성 - Vector DB 허용
+resource "aws_vpc_security_group_ingress_rule" "in_vector_db" {
+  security_group_id = aws_security_group.mbv_sg.id #보안 그룹 참조
+  cidr_ipv4         = "0.0.0.0/0" #모든 트래픽 허용
+  from_port         = 6333 #포트
+  ip_protocol       = "tcp" #tcp
+  to_port           = 6333 #포트
+}
+
 #보안그룹 아웃바운드 규칙 생성
 resource "aws_vpc_security_group_egress_rule" "out_all" {
   security_group_id = aws_security_group.mbv_sg.id #보안 그룹 참조

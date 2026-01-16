@@ -47,10 +47,16 @@ resource "aws_iam_policy" "ec2_policy" {
   })
 }
 
-#역할에 정책 연결
+#역할에 고객 관리형 정책 연결 - Lambda Invoke
 resource "aws_iam_role_policy_attachment" "ec2_policy_attachment" {
   role       = aws_iam_role.ec2_role.name
   policy_arn = aws_iam_policy.ec2_policy.arn
+}
+
+#역할에 AWS 관리형 정책 연결 - Bedrock Full Access
+resource "aws_iam_role_policy_attachment" "bedrock_policy_attachment" {
+  role       = aws_iam_role.ec2_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonBedrockFullAccess"
 }
 
 #인스턴스 IAM 따로 설정
