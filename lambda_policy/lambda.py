@@ -2,6 +2,7 @@ import boto3
 import os
 import json
 import uuid
+import time
 
 s3 = boto3.client('s3')
 codebuild = boto3.client('codebuild')
@@ -61,8 +62,19 @@ def lambda_handler(event, context):
         print(f"CodeBuild started: {build_id}")
 
         #CodeBuild가 완료되면
-        waiter = codebuild.get_waiter('build_succeeded')
-        waiter.wait(ids=[build_id])
+        while True:
+            build_info = codebuild.batch_get_builds(ids=[build_id])
+            current_status = build_info['builds'][0]['buildStatus']
+            
+            print(f"Current Build Status: {current_status}")
+
+            if current_status in ['SUCCEEDED', 'FAILED', 'FAULT', 'STOPPED', 'TIMED_OUT']:
+                if current_status != 'SUCCEEDED':
+                    raise Exception(f"CodeBuild failed with status: {current_status}")
+                break
+            
+            time.sleep(10)
+            
         print("CodeBuild finished successfully")
 
         #CodeBuild 역할에서 정책 삭제

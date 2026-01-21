@@ -35,7 +35,7 @@ resource "aws_iam_policy" "lambda_policy" {
             "s3:GetObject",
             "s3:DeleteObject"
         ]
-        Resource  = "${var.cli_s3_arn}/*"
+        Resource  = "${var.cli_s3_arn}"
       },
       {
         Effect    = "Allow"
@@ -43,7 +43,7 @@ resource "aws_iam_policy" "lambda_policy" {
             "codebuild:StartBuild",
             "codebuild:BatchGetBuilds"
         ],
-        Resource  = "${var.codebuild_arn}/*"
+        Resource  = "${var.codebuild_arn}"
       },
       {
         Effect = "Allow"
@@ -77,7 +77,7 @@ resource "aws_iam_role_policy_attachment" "lambda_policy_attachment" {
 
 #lambda 함수 생성
 resource "aws_lambda_function" "lambda" {
-  filename      = "./lambda/lambda.zip"
+  filename      = "./lambda_policy/lambda.zip"
   function_name = "${var.project_name}_Codebuild_Lambda"
   role          = aws_iam_role.lambda_role.arn
   runtime       = var.lambda_language
@@ -85,7 +85,7 @@ resource "aws_lambda_function" "lambda" {
   handler       = "lambda.lambda_handler"
   architectures = ["x86_64"]
 
-  source_code_hash = filebase64sha256("./lambda/lambda.zip") 
+  source_code_hash = filebase64sha256("./lambda_policy/lambda.zip") 
 
   environment {
     variables = {

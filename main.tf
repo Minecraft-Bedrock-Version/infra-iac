@@ -17,8 +17,8 @@ module "s3" {
   source = "./s3"
 }
 
-module "lambda_polciy" {
-  source = "./lambda_polciy"
+module "lambda_policy" {
+  source = "./lambda_policy"
   cli_s3_arn = module.s3.cli_s3_arn
   codebuild_arn = module.codebuild.codebuild_arn
   cli_s3_name = module.s3.cli_s3_name
